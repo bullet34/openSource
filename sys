@@ -1,0 +1,5 @@
+import sys
+
+sys.path.append('')  # 모듈을 사용하기 위한 위치경로 추가
+
+sys.exit()  # 파이썬 인터프리터 종료
