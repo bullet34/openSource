@@ -1,0 +1,18 @@
+import pymysql
+
+conn = pymysql.connect(host='localhost', user='root', password='1234', db='3_stock', charset='utf8')  # mysql의 아이디, 패스워드, 데이터베이스 이름
+cur = conn.cursor()
+
+input = {'이름':'john', '나이':34, '키':156}
+
+data = ('ab', 'cd', input['현재가'], input['체결강도'], input['잔량비'])
+
+
+sql = "INSERT INTO stock3_3 VALUES(%s,%s,%s,%s,%s)"
+cur.execute(sql, data)
+
+
+conn.commit()            
+if conn != None:
+    cur.close()
+    conn.close()
