@@ -1,9 +1,9 @@
 from collections import deque
 from itertools import islice
 
-dec = deque([1, 2, 3, 4, 5, 6], maxlen=6)
+deq = deque([1, 2, 3, 4, 5, 6], maxlen=6)  # 길이 6의 리스트 생성
   
-a = sum(islice(dec, 3, 6))
+a = sum(islice(dec, 3, 6))  # 변수deq의 3~5번 인덱스의 값 더하기 
 
-print(dec)
+print(deq)
 print(a)
