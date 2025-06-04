@@ -5,7 +5,7 @@ a = datetime.datetime.now()  # 현재시각 참조변수 a 생성
 print(a)
 
 a = a.strftime("%H:%M")  # 현재시각 시:분
-b = time.strftime("%m-%d")  월-일 
+b = time.strftime("%Y-%m-%d")  년-월-일 
 c = time.strftime("%H:%M:%S")  # 시:분:초
 
 print(a)
