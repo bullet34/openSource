@@ -1,6 +1,6 @@
 date = time.strftime("%m%d")
 
-f1 = open('newFolder/'+date+'.txt', mode='a', encoding='utf8')  # 파일경로 newFolder에 .txt 파일로 저장, 파일생성 및 덮어쓰기 모드, 인코딩
+f1 = open('newFolder/'+date+'.txt', mode='a', encoding='utf8')  # 파일경로 newFolder에 .txt 파일로 저장, 파일생성 및 덮어쓰기 append모드, 인코딩
 
 data = 'python'
 f1.write(data + '\n')  # f1 객체에 변수 data의 내용과 줄바꿈 값 저장
