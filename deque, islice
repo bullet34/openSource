@@ -1,0 +1,9 @@
+from collections import deque
+from itertools import islice
+
+dec = deque([1, 2, 3, 4, 5, 6], maxlen=6)
+  
+a = sum(islice(dec, 3, 6))
+
+print(dec)
+print(a)
