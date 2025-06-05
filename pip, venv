@@ -1,0 +1,15 @@
+- 라이브러리 설치
+pip install 패키지명
+
+- 라이브러리 업데이트
+pip install 패키지이름 --update
+
+- 가상환경 생성
+python -m env 폴더이름
+
+- 가상환경 실행
+폴더이름/Scripts/activate
+
+- 가상환경 실행시 bat 파일 실행을 위한 설정
+powerShell 관리자 권한 실행 후 
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser 입력, y
