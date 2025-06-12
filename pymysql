@@ -5,7 +5,7 @@ cur = conn.cursor()
 
 input = {'이름':'john', '나이':34, '키':156}
 
-data = ('ab', 'cd', input['현재가'], input['체결강도'], input['잔량비'])
+data = ('ab', 'cd', input['이름'], input['나이'], input['키'])
 
 
 sql = "INSERT INTO stock3_3 VALUES(%s,%s,%s,%s,%s)"
