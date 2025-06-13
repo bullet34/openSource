@@ -1,0 +1,36 @@
+import pandas as pd  # 엑셀 사용시 openpyxl 패키지 설치
+
+data = [
+    ["005930", "삼성전자", 66500],
+    ["035720", "카카오", 80600],
+    ["005380", "현대차", 185000]
+]
+columns = ["종목코드", "종목명", "현재가"]
+
+
+df = pd.DataFrame(data=data, columns=columns) # 데이터 프레임 생성
+df.set_index('종목코드', inplace=True)  # '종목코드' 컬럼을 인덱스로 지정, inplace=True 반환없이 df 데이터프레임에 바로 적용
+
+# 저장
+df.to_excel("폴더이름/파일이름.xlsx")   # 엑셀 파일형식 저장
+df.to_csv("폴더이름/파일이름.csv")  # csv 파일형식 저장
+
+# 불러오기
+df = pd.read_excel("폴더이름/파일이름.xlsx", engine = "openpyxl", sheet_name="Sheet1", dtype={'a':str}, header=3, names= ['a', 'b', 'c']) # sheet_name 시트 지정, dtype 데이터 타입지정, header 시작부분 지정, names 컬럼 이름 새로지정
+df = pd.read_csv("폴더이름/파일이름.csv", dtype={'종목코드':str}, header=0, usecols=[0, 1, 2], index_col='종목코드')  # usecols 사용할 컬럼과 속한 데이터 지정, index_col 인덱스 지정
+
+df_keys = df.columns # df 데이터프레임의 열 목록, df.keys() 메서드 사용시 같은 결과
+df_values = df.values # 행 데이터
+
+df.drop('Unnamed: 0', axis=1, inplace=True) # 'Unnamed: 0'이름의 열을 제거. axis=1은 열, 0은 행 지정
+
+df.loc[1, '종목명'] = '기아차'  # '종목명'컬럼의 2행 부분의 값을 '기아차'로 변경
+
+df2 = df.loc[(df['현재가'] > 70000) & (df['종목명'] == '현대차')]  # 현재가 7만 초과이고, 종목명이 '현대차'인 데이터프레임 
+df2 = df.query('현재가 > 70000 and 종목명 == "현대차"')  # 같은 결과
+
+df2['new'] = df['현재가'] + 100   # 'new'이름의 컬럼 파생변수 추가
+
+
+
+
