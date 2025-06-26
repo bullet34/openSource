@@ -6,8 +6,11 @@ a = glob.glob(./abc/*file*.png)  # 이름에 file이 들어가는 모든 파일
 a = glob.glob(./abc/**/*.png, recursive=True)  # 모든 하위폴더까지 찾기
 a = glob.glob(./abc/[dog]*.png)  # d,o,c 로 시작하는 모든 png 파일
 
-for file_list in a:
+for file_list in a:  # 경로에 있는 폴더와 파일을 구분하기
   if os.path.isdir(file_list):
     print(f"{file_list}는 디렉토리 입니다")
   elif os.path.isfile(file_list:
     print(f"{file_list}는 파일 입니다")
+
+if not os.path.exists("./source/abc"):  # 하위폴더 source에 abc 폴더가 없다면 abc폴더 생성
+  os.makedirs("abc")
