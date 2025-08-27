@@ -1,7 +1,6 @@
 from pytubefix import YouTube
 import os
 from moviepy import AudioFileClip
-import time
 
 youtube_url = 'https://www.youtube.com/watch?v=cU0JrSAyy7o'
 
