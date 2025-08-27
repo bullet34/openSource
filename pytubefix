@@ -1,0 +1,34 @@
+from pytubefix import YouTube
+import os
+from moviepy import AudioFileClip
+import time
+
+youtube_url = 'https://www.youtube.com/watch?v=cU0JrSAyy7o'
+
+try:
+    # 객체 생성
+    yt = YouTube(youtube_url)
+    
+    # 오디오 스트림만 필터링
+    audio_stream = yt.streams.filter(only_audio=True).first()
+    
+    # 경로에 다운로드
+    audio_file = audio_stream.download("./") # 경로입력
+    
+    # 확장자 mp3 변환
+    first, two = os.path.splitext(audio_file) #  파일이름과 확장자이름을 나눠서 반환
+    mp3_name = first + '.mp3'  # 확장자 이름을 변경
+    os.rename(audio_file, mp3_name)  # rename 함수로 파일이름 변경
+
+    
+    # moviepy 모듈을 사용한 확장자 mp3 변환
+    # first, two = os.path.splitext(audio_file)
+    # mp3_name = first + '.mp3'
+    
+    # audio_clip = AudioFileClip(audio_file)
+    # audio_clip.write_audiofile(mp3_name)
+    # audio_clip.close()
+    # os.remove(audio_file)
+  
+except Exception as e:
+    print(f"에러: {e}")
