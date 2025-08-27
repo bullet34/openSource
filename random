@@ -1,0 +1,6 @@
+import random
+
+a = [random.randint(1, 10) for i in range(1, 10)]  # 1~10의 정수 난수 생성
+a = [round(random.uniform(1, 10), 2) for i in range(1, 10)]  # 1~10의 정수 실수 생성
+
+print(a)
