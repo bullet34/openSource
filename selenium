@@ -1,0 +1,51 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+
+from selenium.webdriver.chrome.options import Options
+import time
+import random
+
+#옵션 설정
+chrome_options = Options()
+chrome_options.add_argument("--start-maximized")    # 화면 최대
+chrome_options.add_experimental_option("detach", True)  # 실행시 창이 꺼지지 않음
+
+driver = webdriver.Chrome(options=chrome_options)
+driver.get("https://naver.com")  # 홈페이지 창 띄우기
+
+# ㄹrom selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+
+from selenium.webdriver.chrome.options import Options
+
+import time
+import random
+
+
+#옵션 설정
+chrome_options = Options()
+chrome_options.add_argument("--start-maximized")    # 화면 최대
+chrome_options.add_experimental_option("detach", True)  # 실행시 창이 꺼지지 않음
+
+driver = webdriver.Chrome(options=chrome_options)
+driver.get("https://naver.com")  # 홈페이지 창 띄우기
+
+
+#  find_element 함수로 필요한 요소 찾기1
+query = driver.find_element(By.ID, "query") # 검색창 id로 지정
+# query = driver.find_element(By.CSS_SELECTOR, "#query")  # id
+# query = driver.find_element(By.CSS_SELECTOR, ".query")  # class
+
+query.send_keys("네이버")   # 검색어 '네이버' 입력
+
+search_btn = driver.find_element(By.ID, "search-btn")   # 버튼 찾기
+search_btn.click()  # 버튼 클릭
+
+
+#  find_element 함수로 필요한 요소 찾기2
+driver.find_element(By.ID, "query").send_keys("네이버")
+
+# driver.find_element(By.ID, "search-btn").click()
+driver.find_element(By.ID, "query").send_keys(Keys.ENTER)  # 검색일시 클릭대신 ENTER키 사용이 가능
