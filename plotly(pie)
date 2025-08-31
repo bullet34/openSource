@@ -1,0 +1,30 @@
+import plotly.graph_objects as go
+import pandas as pd
+
+# 데이터
+categories = ['A', 'B', 'C', 'D', 'E']
+value1 = [10, 56, 30, 2, 50]
+
+# 그래프 생성
+fig = go.Figure()
+
+# pie 차트 (차트에 값+퍼센트 텍스트 표시)
+fig.add_trace(go.Pie(labels=categories, values=value1, textinfo='percent+value'))
+# pie hole (pie차트 40% 구멍)
+fig.update_traces(hole=.4)
+
+# 그래프 레이아웃 설정 (파이 중앙에 텍스트 주석(annotations) 추가)
+fig.update_layout(title="",            # 타이틀 공백 또는 생략
+        annotations=[
+        dict(
+            text="Multiple Line Graph",  # 표시할 텍스트
+            xref="paper", yref="paper",  # 그래프 영역 기준 좌표
+            x=0.5, y=0.5,              # x와 y 좌표를 0.5로 설정하여 정확히 중앙에 배치
+            showarrow=False,           # 텍스트에 화살표를 표시하지 않음
+            font=dict(size=19)          # 글꼴 크기 설정 (선택 사항)
+        )
+    ], width=900, height=700           # 레이아웃 크기 설정
+)
+
+#fig.show()
+fig.write_html("chart/pie.html")
