@@ -7,24 +7,10 @@ from selenium.webdriver.chrome.options import Options
 
 #옵션 설정
 chrome_options = Options()
-chrome_options.add_argument("--start-maximized")    # 화면 최대
-chrome_options.add_experimental_option("detach", True)  # 실행시 창이 꺼지지 않음
 
-driver = webdriver.Chrome(options=chrome_options)
-driver.get("https://naver.com")  # 홈페이지 창 띄우기
+# chrome_options.add_argument("user-data-dir=C:\\user_data\\as")  # 유저 정보파일 생성
+# chrome_options.add_argument("disable-blink-features=AutomationControlled")  # 유저로 인식하는 옵션
 
-# ㄹrom selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-
-from selenium.webdriver.chrome.options import Options
-
-import time
-import random
-
-
-#옵션 설정
-chrome_options = Options()
 chrome_options.add_argument("--start-maximized")    # 화면 최대
 chrome_options.add_experimental_option("detach", True)  # 실행시 창이 꺼지지 않음
 
@@ -47,7 +33,7 @@ search_btn.click()  # 버튼 클릭
 driver.find_element(By.ID, "query").send_keys("네이버")
 
 # driver.find_element(By.ID, "search-btn").click()
-driver.find_element(By.ID, "query").send_keys(Keys.ENTER)  # 검색일시 클릭대신 ENTER키 사용이 가능
+driver.find_element(By.ID, "query").send_keys(Keys.ENTER)  # 검색일시 클릭대신 ENTER키 사용으로도 가능
 
 
 # driver.save_screenshot("네이버 검색.png")  # 스크린샷
