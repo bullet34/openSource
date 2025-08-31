@@ -1,0 +1,19 @@
+import plotly.graph_objects as go
+import pandas as pd
+
+# 데이터
+categories = ['A', 'B', 'C', 'D', 'E']
+value1 = [10, 56, 30, 2, 50]
+
+# 그래프 생성
+fig = go.Figure()
+
+# bar 차트 (막대위 value1 값 텍스트로 표시)
+fig.add_trace(go.Bar(x=categories, y=value1, text=value1, textposition='outside', textfont=dict(size=15))) 
+
+# 그래프 레이아웃 설정 (타이틀 이름, y축 값 범위, 레이아웃 크기 설정)
+fig.update_layout(title="Multiple Line Graph", xaxis_title="Category", yaxis_title="Value", yaxis=dict(range=[0, 100]), 
+                  width=900, height=700)
+
+#fig.show()
+fig.write_html("bar.html")
