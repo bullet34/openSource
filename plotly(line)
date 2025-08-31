@@ -1,0 +1,40 @@
+import plotly.graph_objects as go
+import pandas as pd
+
+# 데이터
+categories = ['A', 'B', 'C', 'D', 'E']
+value1 = [10, 56, 30, 2, 50]
+value2 = [5, 33, 25, 65, 45]
+value3 = [87, 12, 43, 32, 42]
+
+# df = pd.DataFrame({
+#     'Category': ['A', 'B', 'C', 'D', 'E'],
+#     'Value1': [73, 20, 33, 24, 50],
+#     'Value2': [45, 15, 25, 10, 45],
+#     'Value3': [22, 12, 5, 32, 42]
+# })
+
+# 그래프 생성
+fig = go.Figure()
+
+## 선 그래프 ##
+# 첫 번째 선 추가
+fig.add_trace(go.Scatter(x=categories, y=value1, mode='lines', name='Value1'))
+
+# 두 번째 선 추가
+fig.add_trace(go.Scatter(x=categories, y=value2, mode='lines', name='Value2'))
+
+# 세 번째 선 추가
+fig.add_trace(go.Scatter(x=categories, y=value3, mode='lines', name='Value3'))
+
+# fig.add_trace(go.Scatter(x=categories, y=value1, mode='lines', name='Value1', line=dict(color='blue', width=3)))
+# fig.add_trace(go.Scatter(x=categories, y=value2, mode='lines', name='Value2', line=dict(color='red', width=2)))
+# fig.add_trace(go.Scatter(x=categories, y=value3, mode='lines', name='Value3', line=dict(color='pink', width=1)))
+
+# 그래프 레이아웃 설정 (타이틀 이름, y축 값 범위, 레이아웃 크기 설정)
+fig.update_layout(title="Multiple Line Graph", xaxis_title="Category", yaxis_title="Value", yaxis=dict(range=[0, 100]), 
+                  width=900, height=700)
+
+# 저장
+#fig.show()
+fig.write_html("line_1.html")
