@@ -1,0 +1,8 @@
+
+-w  # 실행시 콘솔창 x
+-F  # 파일하나만 생성 
+--add-data "파일경로\file.ui;."  # 파일 포함
+--icon="파일경로\파일.ico"  # 아이콘 변경, -add-data 파일경로도 지정
+
+# 예시
+pyinstaller -w -F --add-data "window.ui;." --add-data "Dialog.ui;." C:\Users\test.py
