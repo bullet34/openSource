@@ -23,5 +23,13 @@ if not os.path.exists("./source/abc"):  # 하위폴더 source에 abc 폴더가 �
 # os.makedirs(folder, exist_ok=True)  # 해당 경로에 파일이 존재하면 pass, 않는다면 생성
 
 # 파일이름과 확장자이름 반환
-a = glob.glob('./excel/*.xlsx')[0]  # excel 폴더의 모든 .xlsx파일중 첫번째 파일이름 반환
+a = glob.glob('./excel/*.xlsx')[0]  # excel 폴더의 모든 .xlsx파일중 첫번째 파일이름 반환, 출력 - ['.\\test12.py']
 first_name, second_name = os.path.splitext(a)  # 파일이름과 확장자 이름 반환
+
+# 폴더, 파일 경로
+a = os.getcwd() # 작업중인 현재 폴더 경로
+a = os.listdir(os.getcwd())  # 현재 폴더 경로의 파일이름 리스트, 출력 - ['config', 'log', 'test.py']
+
+# a = os.path.realpath(__file__) # 파일의 실제경로, 출력 - 'C:\\USER\\test.py'
+# a = os.path.abspath(__file__) # 파일의 절대경로
+
