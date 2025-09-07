@@ -1,0 +1,9 @@
+import pyautogui
+
+# a = pyautogui.alert(title="타이틀", text="텍스트", button="버튼")
+
+# b = pyautogui.confirm(title="타이틀", text="텍스트", buttons=["1", "2", "3"])
+
+c = pyautogui.prompt(title="타이틀", text="텍스트", default="입력")
+
+# 출력시 내용 또는 None타입 반환
