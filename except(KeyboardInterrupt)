@@ -1,0 +1,9 @@
+import time
+
+try:
+  while True:
+    print("hello")
+    time.sleep(1)  # 1초마다 "hello" 무한 출력
+
+except KeyboardInterrupt:  # 키보드 입력값을 받음
+  print("ctrl + c 키 입력시 중지")
