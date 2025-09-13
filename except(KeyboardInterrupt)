@@ -5,5 +5,5 @@ try:
     print("hello")
     time.sleep(1)  # 1초마다 "hello" 무한 출력
 
-except KeyboardInterrupt:  # 키보드 입력값을 받음
+except KeyboardInterrupt:  # 강제중지 신호를 받을시 발생하는 예외 
   print("ctrl + c 키 입력시 중지")
