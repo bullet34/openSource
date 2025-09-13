@@ -1,0 +1,5 @@
+import winsound
+
+# 시스템의 기본 비프음 재생
+# winsound.Beep(110, 2250) # 주파수(Hz), 지속시간(ms)
+winsound.MessageBeep()  # 메세지 알림
