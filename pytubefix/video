@@ -1,0 +1,19 @@
+from pytubefix import YouTube
+
+
+try:
+    video_url = "https://www.youtube.com/watch?v=6ZUIwj3FgUY"
+    yt = YouTube(video_url)
+    
+    # get_highest_resolution() 대신 filter()와 first()를 사용
+    stream = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
+    
+    # 다운로드
+    if stream:
+        stream.download(output_path='./', filename=yt.title + '.mp4')
+        print("다운로드 완료")
+    else:
+        print("다운로드할 스트림을 찾을 수 없습니다.")
+
+except Exception as e:
+    print("실패:", e)
