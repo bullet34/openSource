@@ -1,0 +1,8 @@
+
+--standalone  # 인터프리터, 라이브러리, 파일 을 모은 배포 패키지 생성
+--onefile  # 실행파일 .exe에 모든 파일들을 압축(--standalone 기능 포함되어있음)
+--enable-plugin=pyqt5  # pyqt5 플러그인 포함
+--windows-disable-console  # 실행시 콘솔창 비활성
+--include-data-file="원본파일경로=생성시파일경로"
+
+nuitka --onefile --enable-plugin=pyqt5 --include-data-file="Dialog.ui=Dialog.ui" 파일이름(start.py)
