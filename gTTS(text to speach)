@@ -1,0 +1,15 @@
+from gtts import gTTS
+import os
+
+import time
+
+# 변환할 텍스트
+text = "Good morning"
+# 언어 설정
+language = 'ko' # en, fr, zh-CN, zh-TW, pt, es
+
+# gTTS 객체 생성
+speech = gTTS(text=text, lang=language, slow=False)
+
+# 음성 파일로 저장
+speech.save("new.mp3")
