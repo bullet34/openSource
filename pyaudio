@@ -1,0 +1,72 @@
+import pyaudio
+import wave
+import time
+
+# PyAudio 객체 초기화
+p = pyaudio.PyAudio()
+
+# 스트림 설정
+CHUNK = 1024
+FORMAT = pyaudio.paInt16
+CHANNELS = 2
+RATE = 44100
+RECORD_SECONDS = 5
+WAVE_OUTPUT_FILENAME = "output.wav" # output.mp3
+
+# 스트림 열기
+stream = p.open(format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                frames_per_buffer=CHUNK,
+                input_device_index=2)   # 장치 설정
+
+print("녹음 시작...")
+
+frames = []
+
+try:
+    while True:
+        data = stream.read(CHUNK)
+        frames.append(data)
+    
+except KeyboardInterrupt: # 키보드 입력 Ctrl+C를 누르면 녹음 중지
+    print("녹음 중지.")
+
+
+# 스트림 종료
+stream.stop_stream()
+stream.close()
+p.terminate()
+
+# WAV 파일로 저장
+wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+wf.setnchannels(CHANNELS)
+wf.setsampwidth(p.get_sample_size(FORMAT))
+wf.setframerate(RATE)
+wf.writeframes(b''.join(frames))
+wf.close()
+
+print(f"파일이 {WAVE_OUTPUT_FILENAME}로 저장되었습니다.")
+
+
+### 오디오 목록 가져오기
+
+# import pyaudio
+
+# p = pyaudio.PyAudio()
+
+# # PyAudio 호스트 API 정보 가져오기 (일반적으로 0번이 기본 호스트 API)
+# info = p.get_host_api_info_by_index(0)
+# numdevices = info.get('deviceCount')
+
+# print("사용 가능한 오디오 입력 장치:")
+# for i in range(0, numdevices):
+#     # 각 장치 정보 가져오기
+#     device_info = p.get_device_info_by_host_api_device_index(0, i)
+    
+#     # 해당 장치가 입력 장치인지 확인 (maxInputChannels > 0)
+#     if device_info.get('maxInputChannels') > 0:
+#         print(f"  Device ID: {i} - {device_info.get('name')}")
+
+# p.terminate()
