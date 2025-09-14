@@ -29,7 +29,7 @@ first_name, second_name = os.path.splitext(a)  # 파일이름과 확장자 이�
 # 폴더, 파일 경로
 a = os.getcwd() # 작업중인 현재 폴더 경로
 a = os.listdir(os.getcwd())  # 현재 폴더 경로의 파일이름 리스트, 출력 - ['config', 'log', 'test.py']
-a = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test.py")  # 파일의 폴더경로 dirname, 폴더경로의 지정한 파일이름을 join
+a = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test.py")  # 파일의 폴더경로 dirname, 폴더경로에 지정한 파일이름(test.py)을 join
 
 # a = os.path.realpath(__file__) # 파일의 실제경로, 출력 - 'C:\\USER\\test.py'
 # a = os.path.abspath(__file__) # 파일의 절대경로
