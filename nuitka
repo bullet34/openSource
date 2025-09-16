@@ -4,5 +4,6 @@
 --enable-plugin=pyqt5  # pyqt5 플러그인 포함
 --windows-disable-console  # 실행시 콘솔창 비활성
 --include-data-file="원본파일경로=생성시파일경로"
+--windows-icon-from-ico=sun.ico  # sun.ico 파일 아이콘지정
 
 nuitka --onefile --enable-plugin=pyqt5 --include-data-file="Dialog.ui=Dialog.ui" 파일이름(start.py)
