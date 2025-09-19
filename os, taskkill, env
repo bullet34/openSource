@@ -2,7 +2,11 @@ import os
 
 os.system('cls')  # clear screen
 
+#프로세스
 os.system('tasklist')  # 프로세스 목록 출력
-
 os.system('taskkill /f /pid 12345')  # 프로세스 id를 사용한 프로세스 강제종료
 os.system('taskkill /f /im python.exe')  # 프로세스명을 사용한 프로세스 강제종료
+
+#환경변수
+env_var = os.getenv("api_key")  # 환경변수에 등록된 api_key키값 str객체로 반환
+env_var = os.environ["api_key"]
