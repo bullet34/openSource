@@ -14,7 +14,7 @@ def start2():   # 동기함수
 
 async def new():
     task = asyncio.create_task(start1())   # (함수(인자)) 비동기 함수를 메인스레드에서 실행, 바로 실행    
-    await asyncio.to_thread(start2) # (함수, 인자)  동기함수를 별도의 스레드에서 등록하고 비동기적으로 실행함, 실행은 await 구문에서 실행됨
+    await asyncio.to_thread(start2) # (함수, 인자)  동기함수를 별도의 스레드에서 생성하고 비동기적으로 실행함, 실행은 await 구문에서 실행됨
     
     task.cancel()  # 실행 취소
     
