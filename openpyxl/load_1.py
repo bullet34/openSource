@@ -20,7 +20,7 @@ for store in cell_files:    # 다수의 파일
                 if cell.value != None:
                     amount.append(cell.value)
     
-df = pd.DataFrame({
+df = pd.DataFrame({    # 데이터 프레임에 값과 함께하여 생성
     '물품' : school, '수량' : amount
 })
 df = df.groupby('물품').sum()  # 물품의 각 품목 기준으로 수량값 더하여 품목 하나로 반환
