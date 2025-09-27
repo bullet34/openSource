@@ -22,6 +22,7 @@ driver.get("https://naver.com")  # 홈페이지 창 띄우기
 query = driver.find_element(By.ID, "query") # 검색창 id로 지정
 # query = driver.find_element(By.CSS_SELECTOR, "#query")  # id
 # query = driver.find_element(By.CSS_SELECTOR, ".query")  # class
+# query = driver.find_element(By.XPATH, "")  # xpath
 
 query.send_keys("네이버")   # 검색어 '네이버' 입력
 
@@ -39,3 +40,24 @@ driver.find_element(By.ID, "query").send_keys(Keys.ENTER)  # 검색일시 클릭
 # driver.save_screenshot("네이버 검색.png")  # 스크린샷
 
 driver.quit()  # 창 종료
+
+
+### elements
+result = driver.find_elements(By.CSS_SELECTOR, "")
+for value in result:
+  a = value.get_attribute("") # 속성값 가져오기
+  print(a)  # 값 출력
+
+
+### wait
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+driver = webdriver.Chrome(options=chrome_options)
+
+wait = WebDriverWait(driver, 10) # 최대 10초까지 대기
+target_element = wait.until(EC.element_to_be_clickable((By.ID, "some_dynamic_button_id")) ) # 인자로 튜플값 
+    
+print("요소가 성공적으로 클릭 가능한 상태가 되었습니다.")
+target_element.click()
+
