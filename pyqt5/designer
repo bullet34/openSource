@@ -1,0 +1,4 @@
+
+pip install pyqt5-tools  # 설치
+
+pyqt5-tools designer  # 실행
