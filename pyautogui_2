@@ -1,0 +1,50 @@
+import pyautogui
+import time
+
+# print(pyautogui.size()) # 모니터 사이즈 
+
+print(pyautogui.position()) # 마우스 좌표 
+
+# pyautogui.moveTo(100, 200)
+# pyautogui.moveTo(641, 19, 1)   # 해당좌표로 1초간 이동
+    
+
+# pyautogui.click()
+# pyautogui.click(button='right')
+# pyautogui.doubleClick()
+# pyautogui.click(clicks=3, interval=1) # 3번 클릭할건데 1초마다
+
+
+# pyautogui.keyDown('Alt') # Alt 키를 누른 상태를 유지합니다.
+# pyautogui.press('Tab') # Tab key를 입력합니다. 
+# pyautogui.keyUp('Alt') # Alt 키를 뗍니다. 
+
+pyautogui.hotkey('alt', 'tab')
+# pyautogui.moveTo(641, 19, 1)
+# pyautogui.click()
+
+# try: 
+#     button5location = pyautogui.locateOnScreen('poi1.png') # 이미지가 있는 위치를 가져옵니다. 
+#     point = pyautogui.center(button5location)
+#     print(point)
+#     pyautogui.moveTo(point.x, point.y, 1)
+#     pyautogui.click() 
+# except: 
+#     print("이미지가 없습니다") 
+
+
+    
+pyautogui.moveTo(781, 416, 1)
+pyautogui.keyDown('ctrl')
+
+for i in range(0, 5): 
+    pyautogui.dragTo(781, 416, 0.5)
+
+
+
+pyautogui.keyUp('ctrl')
+
+
+
+
+
