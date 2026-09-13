@@ -20,8 +20,14 @@ df["day_cos"] = np.cos(
     2 * np.pi * df["day_of_year"] / 365
 )
 
-# a = np.arcsin(0.871706)
-# ab = a * 365 / (2*np.pi)
+
+angle = np.arctan2(df["day_sin"], df["day_cos"])
+
+df["day_of_year_recovered"] = (angle % (2 * np.pi)) / (2 * np.pi) * 365
+
 
 print(df)
-# print(ab)
+print()
+
+result = ((np.arctan2(0.871706, -0.490029) % (2 * np.pi)) / (2 * np.pi) * 365).round().astype(int)
+print(result)
