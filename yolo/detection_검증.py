@@ -3,7 +3,7 @@ from ultralytics import YOLO
 model = YOLO("best.pt")
 
 # 추론
-result = model.predict("dog.jpg")
+result = model.predict("test.jpg")
 
 
 # 모델평가
