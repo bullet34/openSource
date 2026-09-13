@@ -19,9 +19,11 @@ async def handle_client(reader, writer):
         if not data:  # 클라이언트가 연결을 ''반환
             break
 
+        msg = byte_data.decode("utf-8")    # 문자 변환
+        
         print("받은 데이터:", data)  # 받은 데이터 확인
 
-        writer.write(data)  # 받은 데이터를 그대로 클라이언트로 전송
+        # writer.write(msg.encode("utf-8"))  # 받은 데이터를 클라이언트로 전송
 
         await writer.drain()   # 전송이 끝날 때까지 기다림
 
