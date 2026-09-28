@@ -1,0 +1,638 @@
+Button btn = (Button)sender;
+
+if(bFirstNum == true )
+{
+    txtboxDisplay.Text = btn.Text;
+    bFirstNum = false;
+
+textBox1.SelectionStart = textBox1.Text.Length;
+textBox1.ScrollToCaret();
+
+=======
+
+
+- 종료
+Environment.Exit(0);
+
+- 메세지 박스
+messageBox.show()
+
+- 변환후 숫자형 체크
+int.tryParse(text , out int num1)
+
+- 문자열 채우기
+PadLeft(16,'0')
+
+toString("D5")
+$"{num:D5}"
+
+폼객체.show
+.dialogue
+
+DialogResult = DialogResult.OK;
+this.Close();
+
+#######################################################
+
+private Bitmap SplitChannel(Bitmap src)
+{
+    int width = src.Width;
+    int height = src.Height;
+
+    Bitmap bmp8 = new Bitmap(width, height, PixelFormat.Format8bppIndexed);
+
+    ColorPalette palette = bmp8.Palette;
+
+    for (int i = 0; i < 256; i++)
+    {
+        palette.Entries[i] = Color.FromArgb(i, i, i);
+    }
+
+    bmp8.Palette = palette;
+
+    Rectangle rect = new Rectangle(0, 0, width, height);
+    BitmapData srcData = src.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+    BitmapData bmpData = bmp8.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
+
+    int srcStride = srcData.Stride;
+    int rStride = bmpData.Stride;
+
+    byte[] srcBuffer = new byte[srcStride * height];
+    byte[] bmpBuffer = new byte[rStride * height];
+
+    Marshal.Copy(srcData.Scan0, srcBuffer, 0, srcBuffer.Length);
+
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            int srcIndex = y * srcStride + x * 3;
+
+            // Format24bppRgb의 실제 메모리 순서는 B G R
+            byte B = srcBuffer[srcIndex];
+            byte G = srcBuffer[srcIndex + 1];
+            byte R = srcBuffer[srcIndex + 2];
+
+            bmpBuffer[y * rStride + x] = R;
+            
+        }
+    }
+
+    Marshal.Copy(bmpBuffer, 0, bmpData.Scan0, bmpBuffer.Length);
+
+    src.UnlockBits(srcData);
+    bmp8.UnlockBits(bmpData);
+
+    return bmp8;
+}
+
+
+#######################################################
+
+- Mat - bitmap 변환
+Mat src = Cv2.ImRead(@"C:\\Users\\HKIT\\Downloads\\TestImage\\Noise_30.bmp");
+Bitmap bmp = BitmapConverter.ToBitmap(src);
+
+// src.convertto(8uc1), cv2.bitwisenot
+Cv2.Threshold(org_img, img, value, 255, ThresholdTypes.Binary);
+
+#######################################################
+
+- AVG
+Cv2.Blur(org, new_img, new OpenCvSharp.Size(3, 3));
+
+- Gaussian
+Cv2.GaussianBlur(org, new_img, new OpenCvSharp.Size(3, 3), 0);
+
+- MedianBlur
+Cv2.MedianBlur(org, new_img, 3);
+
+- Threshold
+Cv2.Threshold(org, new_img, value, 255, ThresholdTypes.Binary);
+
+
+#######################################################
+
+- 윤곽선
+OpenCvSharp.Point[][] contours;
+HierarchyIndex[] hierarchy;
+
+Mat img_input = (create_img == null) ? org_img : create_img.Clone();
+
+Cv2.FindContours(img_input, out contours, out hierarchy, RetrievalModes.External, 
+                	ContourApproximationModes.ApproxSimple);
+
+Mat result = new Mat();
+Cv2.CvtColor(org_img, result, ColorConversionCodes.GRAY2BGR);	// 채널변환
+Cv2.DrawContours(result, contours, -1, new Scalar(0, 0, 255), 2);	// 윤곽선 그리기
+
+
+- 좌표
+//foreach (var contour in contours)
+//{
+//    // 3. 모멘트 계산
+//    Moments moments = Cv2.Moments(contour);
+
+//    // 4. 중심점 좌표 계산 (M10 / M00, M01 / M00)
+//    int cx = (int)(moments.M10 / moments.M00);
+//    int cy = (int)(moments.M01 / moments.M00);
+
+//    // 결과 확인
+//    textBox2.Text += $"Center: X={cx}, Y={cy}\r\n";
+//}
+
+- 사각형 (가로, 세로)
+boundingRect(contour)
+
+-영역
+contourArea(contour)
+
+사각형 그리기
+cv2.rectangle(이미지, rect, scalar.red, 선굵기)
+
+#######################################################
+
+- 차트
+using System.Windows.Forms.DataVisualization.Charting;
+
+namespace WinFormsDataGridChart
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e) // 로드
+        {
+            dgvSdtScore.Columns.Add("colNum", "번호");
+            dgvSdtScore.Columns.Add("colName", "이름");
+            dgvSdtScore.Columns.Add("colKor", "국어");
+            dgvSdtScore.Columns.Add("colEng", "영어");
+            dgvSdtScore.Columns.Add("colMat", "수학");
+            dgvSdtScore.Columns.Add("colAvg", "평균");
+            dgvSdtScore.ReadOnly = true;
+	    
+	    dgvSdtScore.Columns["colNum"].Width = 40;
+
+            chtsdtScore.Series.Clear();
+        }
+
+        private void btnInsert_Click(object sender, EventArgs e)    // 추가
+        {
+            int nCulRow = dgvSdtScore.RowCount;
+
+            double dblAvg = (double.Parse(txtKor.Text) +
+                double.Parse(txtEng.Text) + double.Parse(txtMat.Text)) / 3.0;
+
+            dgvSdtScore.Rows.Add(nCulRow,
+                                 txtName.Text,
+                                 txtKor.Text,
+                                 txtEng.Text,
+                                 txtMat.Text,
+                                 dblAvg.ToString("0.0"));
+
+            Series temp = new Series(txtName.Text);
+            temp.ChartType = SeriesChartType.Line;
+            temp.BorderWidth = 3;
+            temp.MarkerStyle = MarkerStyle.Circle;
+            temp.MarkerSize = 5;
+
+            chtsdtScore.Series.Add(temp);
+
+            temp.Points.AddXY("국어", txtKor.Text);
+            temp.Points.AddXY("영어", txtEng.Text);
+            temp.Points.AddXY("수학", txtMat.Text);
+            temp.Points.AddXY("평균", dblAvg.ToString("0.0"));
+
+
+        }
+
+        private void btnModify_Click(object sender, EventArgs e)    // 수정
+        {
+            int nRow = int.Parse(txtNum.Text);
+
+            double dblAvg = (double.Parse(txtKor.Text) +
+                double.Parse(txtEng.Text) + double.Parse(txtMat.Text)) / 3.0;
+
+            dgvSdtScore.Rows[nRow - 1].Cells["colNum"].Value = txtNum.Text;
+            dgvSdtScore.Rows[nRow - 1].Cells["colName"].Value = txtName.Text;
+            dgvSdtScore.Rows[nRow - 1].Cells["colKor"].Value = txtKor.Text;
+            dgvSdtScore.Rows[nRow - 1].Cells["colEng"].Value = txtEng.Text;
+            dgvSdtScore.Rows[nRow - 1].Cells["colMat"].Value = txtMat.Text;
+            dgvSdtScore.Rows[nRow - 1].Cells["colAvg"].Value = dblAvg.ToString("0.0");
+
+            Series temp = chtsdtScore.Series[nRow-1];
+
+            temp.Points[0].YValues[0] = double.Parse(txtKor.Text);
+            temp.Points[1].YValues[0] = double.Parse(txtEng.Text);
+            temp.Points[2].YValues[0] = double.Parse(txtMat.Text);
+            temp.Points[3].YValues[0] = dblAvg;
+
+            chtsdtScore.Invalidate();
+            chtsdtScore.Update();
+
+        }
+
+        private void dgvSdtScore_CellDoubleClick(object sender, DataGridViewCellEventArgs e) // 선택
+        {
+            txtNum.Text = dgvSdtScore.Rows[e.RowIndex].Cells["colNum"].Value.ToString();
+            txtName.Text = dgvSdtScore.Rows[e.RowIndex].Cells["colName"].Value.ToString();
+            txtKor.Text = dgvSdtScore.Rows[e.RowIndex].Cells["colKor"].Value.ToString();
+            txtEng.Text = dgvSdtScore.Rows[e.RowIndex].Cells["colEng"].Value.ToString();
+            txtMat.Text = dgvSdtScore.Rows[e.RowIndex].Cells["colMat"].Value.ToString();
+
+        }
+    }
+}
+
+
+#######################################################
+
+
+- 파일
+//System.IO.File.WriteAllText("test.txt", "Hello C#");  // 쓰기
+
+//string data;
+//data = File.ReadAllText("test.txt");    // 읽기
+//Console.WriteLine(data);
+
+//File.AppendAllText("test.txt", "안녕하세요1\n 안녕하세요2");    // 내용 추가
+
+
+//string[] names = { "김철수", "이영희", "박민수" }; // 쓰기
+//File.WriteAllLines("test.txt", names);
+
+//string[] data;
+//data = File.ReadAllLines("test.txt"); // 한줄씩 읽기
+//for (int i = 0; i < data.Length; i++)
+//{
+//    Console.WriteLine(data[i]);
+//}
+
+
+//if (File.Exists("test.txt"))  // 파일 존재 확인
+//{
+//    Console.WriteLine(data);
+//}
+//else
+//{
+//    Console.WriteLine("파일이 없습니다");
+//}
+
+
+//if(File.Exists("test.txt")) // 파일 삭제
+//{
+//    File.Delete("test.txt");
+//    Console.WriteLine("파일을 삭제했습니다.");
+//}
+//else { Console.WriteLine("파일이 없습니다."); }
+
+//using (StreamWriter sw = new StreamWriter("test.txt", true))  // 쓰기, true - append
+//{
+//    sw.WriteLine("김철수,10,20,30");
+//    sw.WriteLine("이영희,40,50,60");
+//    sw.WriteLine("박민수,70,80,90");
+//}
+
+
+// 파일 읽기
+//using(StreamReader sr = new StreamReader("C:\\Users\\HKIT\\Desktop\\work\\file_save\\file_save\\bin\\Debug\\student_score.txt"))
+//{
+//    string line;
+//    while ((line = sr.ReadLine()) != null)
+//    {
+//        Console.WriteLine(line);
+//    }
+//}
+
+
+#######################################################
+
+
+- 폴더
+private void get_dir()
+{
+    listBox1.Items.Clear();
+    string[] info = Directory.GetDirectories(textBox1.Text);
+    foreach(string str in info)
+    {
+        string new_str = "[Dir] " + str;
+        listBox1.Items.Add(new_str);
+    }
+
+    string[] info2 = Directory.GetFiles(textBox1.Text);
+    foreach (string str in info2)
+    {
+        string new_str = "[File] " + str;
+        listBox1.Items.Add(new_str);
+    }
+}
+
+private void button2_Click(object sender, EventArgs e)  // 폴더생성
+{
+    Form2 frm = new Form2();
+    
+    if(frm.ShowDialog() == DialogResult.OK)
+    {
+        string path = textBox1.Text + @"\" + frm.strName;
+        Directory.CreateDirectory(path);
+
+        get_dir();
+    }
+}
+
+private void button3_Click(object sender, EventArgs e) // 폴더삭제
+{
+    int index1 = listBox1.SelectedIndex;
+    string str1 = listBox1.Items[index1].ToString();
+
+    try
+    {
+        str1 = str1.Remove(0, 6);
+        Directory.Delete(str1);
+
+        get_dir();
+    }
+    catch (Exception ex) 
+    {
+        MessageBox.Show("폴더삭제중 오류 발생\r\n" +
+            $"오류 종류: {ex.GetType().Name}\n" +
+            $"오류 내용: {ex.Message}");
+    }
+}
+
+private void button4_Click(object sender, EventArgs e)  // 새로고침
+{
+    get_dir();
+}
+
+private void listBox1_MouseDoubleClick(object sender, MouseEventArgs e) // 더블클릭
+{
+    int idx = listBox1.SelectedIndex;
+    string str = listBox1.Items[idx].ToString();
+    str = str.Remove(0, 6);
+
+    textBox1.Text = str;
+    get_dir();
+}
+
+private void button_parent_Click(object sender, EventArgs e)    // 상위폴더
+{
+    textBox1.Text = Directory.GetParent(textBox1.Text).ToString();
+    get_dir();
+}
+
+
+#######################################################
+
+
+- 비트
+
+if (!int.TryParse(textBox1.Text, out int num1) && textBox1.Text != "")
+{
+    MessageBox.Show("숫자를 입력하세요.", "숫자입력", MessageBoxButtons.OK);
+}
+
+try
+{   
+    //int num1 = int.Parse(textBox1.Text);
+    string result = Convert.ToString(num1, 2).PadLeft(16,'0');  // Convert.ToString(num1, 2), 2진수
+    if (((num1 >> 0) & 0x01) == 1) { checkBox1.Checked = true; }
+    else { checkBox1.Checked = false; }
+    if (((num1 >> 1) & 0x01) == 1) { checkBox2.Checked = true; }
+    else { checkBox2.Checked = false; }
+    if (((num1 >> 2) & 0x01) == 1) { checkBox3.Checked = true; }
+    else { checkBox3.Checked = false; }
+    if (((num1 >> 4) & 0x01) == 1) { checkBox4.Checked = true; }
+    else { checkBox4.Checked = false; }
+    if (((num1 >> 5) & 0x01) == 1) { checkBox5.Checked = true; }
+    else { checkBox5.Checked = false; }
+    if (((num1 >> 7) & 0x01) == 1) { checkBox6.Checked = true; }
+    else { checkBox6.Checked = false; }
+    if (((num1 >> 8) & 0x01) == 1) { checkBox7.Checked = true; }
+    else { checkBox7.Checked = false; }
+
+    label2.Text = result;
+}
+catch(Exception ex) { }
+
+
+#######################################################
+// TCP 클라이언트
+
+// TCP 서버	
+server = TcpListener
+
+# 클라이언트 접속 기다림
+client = await server.AcceptTcpClientAsync();
+
+# 스트림 얻기
+stream = client.GetStream();
+
+string clientId = Guid.NewGuid().ToString().Substring(0, 8); // 식별이 쉽도록 8자리만 사용
+            
+            // 2. 필요에 따라 IP와 포트로도 구분 가능
+            string clientEndPoint = client.Client.RemoteEndPoint.ToString();
+
+# 읽기
+int byteCount = await stream.ReadAsync(buffer, 0, buffer.Length);
+# 쓰기
+await stream.WriteAsync(data, 0, data.Length);
+
+
+// client 연결
+client = new TcpClient();
+await client.ConnectAsync(txtIpaddress.Text, nPort);
+stream = client.GetStream();
+
+
+// serial 직렬통신
+            bool isOpen = serialPort1.IsOpen;
+            if(!isOpen)
+            {
+                serialPort1.Open();
+            }
+ serialPort1.Close();
+
+- serial 데이터 수신
+private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
+        {
+            int receive_len = serialPort1.BytesToRead;
+
+            byte[] buffer = new byte[receive_len];
+            serialPort1.Read(buffer, 0, receive_len);
+
+            receive_array.AddRange(buffer);
+
+            int start = receive_array.IndexOf(0x06);
+            int end = receive_array.IndexOf(0x03);
+
+            if(start < 0)
+            {
+                receive_array.Clear();
+                return;
+            }
+            if(start > 0)
+            {
+                receive_array.RemoveRange(start, end);
+            }
+
+            if(start == 0 && end != -1)
+            {
+                byte[] get_data = receive_array.GetRange(start, end + 1).ToArray();
+                BeginInvoke(new Action(() =>
+                {
+                    string str = Encoding.ASCII.GetString(get_data);
+
+                    if (str[3] == 'R')
+                    {
+                        textBox1.AppendText(str + Environment.NewLine); // 문자열 출력
+                    }
+                }));
+
+                receive_array.RemoveRange(start, end + 1);
+            }
+        }
+
+- serial 데이터 송신
+else { data = (ushort)(value ^ 8); }
+                string send_data = Convert.ToString(data, 16);
+                send_data = send_data.PadLeft(4, '0');
+                send = "01WSS0106%DW510" + send_data;
+
+string send_write = "\x05" + send + "\x04";
+serialPort1.Write(send_write);
+###########
+
+// 컨트롤 paint
+public bool Value
+{
+    get
+    {
+        return value;
+    }
+    set
+    {
+        this.value = value;
+
+        Invalidate();
+    }
+}
+
+protected override void OnPaint(PaintEventArgs e)
+{
+    base.OnPaint(e);
+
+    Graphics g = e.Graphics;
+
+    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+    int margin = 5;
+
+    Rectangle rect = new Rectangle( margin, margin, Width - margin * 2, Height - margin * 2);
+
+    Color lampColor;
+
+    if (value == true)
+    {
+        lampColor = Color.Lime;
+    }
+    else
+    {
+        lampColor = Color.DarkGreen;
+    }
+
+    using (SolidBrush brush = new SolidBrush(lampColor))
+    {
+        g.FillEllipse(brush, rect);
+    }
+
+    using (Pen pen = new Pen(Color.Black, 2))
+    {
+        g.DrawEllipse(pen, rect);
+    }
+}
+
+###########
+
+// 컨트롤 paint 
+private bool value = false;
+
+public UserControl1()
+{
+    InitializeComponent();
+}
+
+public bool Value
+{
+    get { return value; }
+    set { this.value = value; Invalidate(); }
+}
+
+protected override void OnPaint(PaintEventArgs e)
+{
+    base.OnPaint(e);
+    Graphics g = e.Graphics;
+    g.SmoothingMode = SmoothingMode.AntiAlias;
+
+    int margin = 5;
+    Rectangle rect = new Rectangle(margin, margin, Width - margin * 2, Height - margin * 2);
+
+    // Define colors for ON and OFF states (Center highlight and outer edge)
+    Color centerColor, edgeColor;
+    if (value == true)
+    {
+        centerColor = Color.LightGreen;
+        edgeColor = Color.LimeGreen;
+    }
+    else
+    {
+        centerColor = Color.MediumSeaGreen;
+        edgeColor = Color.DarkGreen;
+    }
+
+    // Create a circular path for the gradient
+    using (GraphicsPath path = new GraphicsPath())
+    {
+        path.AddEllipse(rect);
+
+        // Apply a radial path gradient for a 3D glowing sphere effect
+        using (PathGradientBrush pgb = new PathGradientBrush(path))
+        {
+            pgb.CenterColor = centerColor;
+            pgb.SurroundColors = new Color[] { edgeColor };
+            // Shift the center slightly up/left for a shiny reflection look (optional)
+            pgb.CenterPoint = new PointF(rect.X + rect.Width * 0.35f, rect.Y + rect.Height * 0.35f);
+
+            g.FillPath(pgb, path);
+        }
+    }
+
+    // Draw the outer border
+    using (Pen pen = new Pen(Color.Black, 2))
+    {
+        g.DrawEllipse(pen, rect);
+    }
+}
+
+###########
+
+// 체크박스
+
+Check[]
+
+###########
+아스키코드 문자 변환 
+string message = Encoding.UTF8.GetString(buffer, 0, byteCount);
+
+문자열 => 바이트 변환
+string strData = "\x02" + cmd + "\x03";
+byte[] data = Encoding.UTF8.GetBytes(strData);
+
+.IndexOf("찾을 문자")
+.Substring(idx, lenth)
+
+문자열 => 16진수
+Convert.ToString(data, 16);
