@@ -1,0 +1,230 @@
+import time
+import cv2
+import numpy as np
+from ultralytics import YOLO
+
+# 1. YOLOv8 세그멘테이션 모델 로드
+model = YOLO("yolov8n-seg.pt")
+model.to("cuda")
+# model.to("cpu")
+
+# 2. 웹캠 연결
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("웹캠을 열 수 없습니다. 연결 상태를 확인해주세요.")
+    exit()
+
+# --- 마우스 클릭 좌표 저장을 위한 전역 변수 및 콜백 함수 ---
+click_points = []
+
+
+def mouse_callback(event, x, y, flags, param):
+    global click_points
+    if event == cv2.EVENT_LBUTTONDOWN:
+        if len(click_points) < 4:
+            click_points.append([x, y])
+            print(f"포인트 {len(click_points)} 지정됨: ({x}, {y})")
+
+
+# 윈도우 생성 및 마우스 콜백 등록
+window_name = "YOLOv8 Segmentation - Real Mask & FPS"
+cv2.namedWindow(window_name)
+cv2.setMouseCallback(window_name, mouse_callback)
+
+# FPS 계산을 위한 변수 초기화
+prev_time = 0
+fps = 0
+alpha = 0.15  # 투명도 설정 (0.0: 완전 투명 ~ 1.0: 불투명)
+
+print(
+    "웹캠 화면에서 마우스로 **원하는 위치를 순서대로 4번 클릭**하여 사각형을 만들어주세요."
+)
+print("종료하려면 'q'를 누르세요.")
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # --- FPS 계산 시작 ---
+    current_time = time.time()
+    time_diff = current_time - prev_time
+    if time_diff > 0:
+        fps = 1 / time_diff
+    prev_time = current_time
+    # --------------------
+
+    # 아직 4번 클릭을 다 안 했다면, 안내 문구와 지금까지 찍힌 점들을 보여줌
+    if len(click_points) < 4:
+        # 안내 텍스트 출력
+        cv2.putText(
+            frame,
+            f"Click 4 points to make polygon ({len(click_points)}/4)",
+            (20, 80),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.7,
+            (0, 255, 255),
+            2,
+        )
+        # 클릭한 점들을 화면에 표시
+        for pt in click_points:
+            cv2.circle(frame, tuple(pt), 6, (0, 0, 255), -1)
+
+        # 4개가 아직 안 되었으면 탐지 로직은 건너뛰고 화면만 출력
+        cv2.imshow(window_name, frame)
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+        continue
+
+    # --- 4번 다 클릭한 이후부터 실행되는 메인 로직 ---
+    custom_polygon = np.array(click_points, dtype=np.int32)
+
+    # 3. 모델 추론 (classes=[0]은 '사람(person)')
+    results = model(frame, classes=[0], verbose=False)
+
+    # 다각형 내부에 포인트가 들어왔는지 체크하는 플래그
+    is_inside_polygon = False
+
+    # 4. 결과 처리
+    for result in results:
+        # --- 추가: 바운딩 박스(Bounding Box) 시각화 ---
+        boxes = result.boxes
+        if boxes is not None:
+            for box in boxes.xyxy:
+                x1, y1, x2, y2 = map(int, box[:4])
+                # 바운딩 박스 그리기
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)
+                cv2.putText(
+                    frame,
+                    "Person",
+                    (x1, y1 - 5),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (255, 255, 0),
+                    1,
+                )
+
+        masks = result.masks
+        if masks is not None:
+            for i, mask_xy in enumerate(masks.xy):
+                if len(mask_xy) == 0:
+                    continue
+
+                # 상하좌우 극단점 (실제 마스크 외곽선 기준)
+                top_idx = np.argmin(mask_xy[:, 1])
+                bottom_idx = np.argmax(mask_xy[:, 1])
+                left_idx = np.argmin(mask_xy[:, 0])
+                right_idx = np.argmax(mask_xy[:, 0])
+
+                tc = tuple(mask_xy[top_idx].astype(int))
+                bc = tuple(mask_xy[bottom_idx].astype(int))
+                lc = tuple(mask_xy[left_idx].astype(int))
+                rc = tuple(mask_xy[right_idx].astype(int))
+
+                center_x = np.mean(mask_xy[:, 0])
+                center_y = np.mean(mask_xy[:, 1])
+
+                tl_candidates, tr_candidates, bl_candidates, br_candidates = (
+                    [],
+                    [],
+                    [],
+                    [],
+                )
+
+                for pt in mask_xy:
+                    px, py = pt
+                    if px < center_x and py < center_y:
+                        tl_candidates.append(pt)
+                    elif px >= center_x and py < center_y:
+                        tr_candidates.append(pt)
+                    elif px < center_x and py >= center_y:
+                        bl_candidates.append(pt)
+                    elif px >= center_x and py >= center_y:
+                        br_candidates.append(pt)
+
+                def get_best_point(candidates, fallback):
+                    if len(candidates) == 0:
+                        return fallback
+                    distances = [
+                        np.linalg.norm(c - np.array([center_x, center_y]))
+                        for c in candidates
+                    ]
+                    return tuple(candidates[np.argmax(distances)].astype(int))
+
+                tl = get_best_point(tl_candidates, tc)
+                tr = get_best_point(tr_candidates, tc)
+                bl = get_best_point(bl_candidates, bc)
+                br = get_best_point(br_candidates, bc)
+
+                # --- 오프셋 적용 ---
+                points = {
+                    "오른쪽 중앙 (RC)": (rc[0] - 30, rc[1]),
+                    "오른쪽 하단 (BR)": (br[0] - 30, br[1]),
+                    "왼쪽 하단 (BL)": (bl[0] + 30, bl[1]),
+                    "왼쪽 중앙 (LC)": (lc[0] + 30, lc[1]),
+                    "좌측 (좌표1)": (lc[0] + 70, bl[1]),
+                    "우측 (좌표2)": (rc[0] - 70, br[1]),
+                }
+
+                # 포인트들이 마우스로 지정한 다각형 구역 내부에 있는지 확인
+                for name, pt in points.items():
+                    px, py = pt
+                    if (
+                        cv2.pointPolygonTest(
+                            custom_polygon, (float(px), float(py)), False
+                        )
+                        >= 0
+                    ):
+                        is_inside_polygon = True
+
+                # 시각화 (마스크 외곽선 + 포인트)
+                pts_poly = np.array(mask_xy, dtype=np.int32)
+                cv2.polylines(
+                    frame, [pts_poly], True, (0, 255, 0), 2
+                )  # 초록색 외곽선
+
+                for name, pt in points.items():
+                    short_label = name.split("(")[1].replace(")", "")
+                    cv2.circle(frame, pt, 5, (0, 0, 255), -1)  # 빨간색 점
+                    cv2.putText(
+                        frame,
+                        short_label,
+                        (pt[0] + 5, pt[1] - 5),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.4,
+                        (255, 255, 255),
+                        1,
+                    )
+
+    # --- 5. 마우스로 지정한 반투명 다각형 영역 오버레이 처리 ---
+    overlay = frame.copy()
+
+    # 충돌 여부에 따라 색상 지정 (빨강 또는 초록)
+    poly_color = (0, 0, 255) if is_inside_polygon else (0, 255, 0)
+
+    # 오버레이 이미지에 채워진 다각형과 테두리 그리기
+    cv2.fillPoly(overlay, [custom_polygon], poly_color)
+    cv2.polylines(overlay, [custom_polygon], True, (255, 255, 255), 2)  # 흰색 테두리
+
+    # cv2.addWeighted를 이용해 투명도 적용
+    cv2.addWeighted(overlay, alpha, frame, 1 - alpha, 0, frame)
+
+    # 6. 화면 좌측 상단에 FPS 출력
+    cv2.putText(
+        frame,
+        f"FPS: {int(fps)}",
+        (20, 40),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.0,
+        (0, 255, 0),
+        2,
+    )
+
+    cv2.imshow(window_name, frame)
+
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
